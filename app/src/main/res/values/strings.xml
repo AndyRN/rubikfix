@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RubikFix</string>
+    <string name="image_view">Display a taken picture</string>
+    <string name="camera_overlay">Display an overlay to assist lining-up</string>
+</resources>
