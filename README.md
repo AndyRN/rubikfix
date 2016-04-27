@@ -1,2 +1,2 @@
-# rubikfix
+# RubikFix
 An Android app.
