@@ -1,5 +1,6 @@
 package com.andyrn.rubikfix;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -10,12 +11,14 @@ import android.view.SurfaceView;
 import java.io.IOException;
 
 /**
- * Created by Andy on 12/10/2015.
+ * Author: Andy
+ * Date: 12/10/2015
  */
+@SuppressLint("ViewConstructor")
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "CameraPreview";
 
-    private Camera camera;
+    private final Camera camera;
 
     public CameraPreview(Context context, Camera camera) {
         super(context);

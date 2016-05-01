@@ -17,13 +17,71 @@ import android.widget.Toast;
 import java.io.FileOutputStream;
 
 /**
- * Created by Andy on 12/10/2015.
+ * Author: Andy
+ * Date: 12/10/2015
  */
 public class CameraActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "CameraActivity";
+    private final Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            Log.i(TAG, "onAutoFocus()");
 
+            if (success) {
+                camera.takePicture(null, null, pictureCallback);
+            }
+        }
+    };
     private Camera camera;
     private boolean firstImageTaken;
+    private final Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(final byte[] data, Camera camera) {
+            Log.i(TAG, "onPictureTaken()");
+
+            final boolean secondImage = firstImageTaken;
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String filename = "FUR.jpg";
+                    if (secondImage) {
+                        filename = "BDL.jpg";
+                    }
+
+                    saveImage(data, filename);
+                }
+            }).start();
+
+            if (!secondImage) {
+                firstImageTaken = true;
+
+                camera.startPreview();
+
+                ImageView overlay = (ImageView) findViewById(R.id.camera_overlay);
+                overlay.setImageResource(R.drawable.overlay_2);
+
+                Toast.makeText(getApplicationContext(), "Scan BDL", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Processing...", Toast.LENGTH_SHORT).show();
+
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            }
+        }
+    };
+
+    private static Camera getCameraInstance() {
+        Camera c = null;
+
+        try {
+            c = Camera.open();
+
+        } catch (Exception e) {
+            // Camera is not available (in use or does not exist)
+        }
+
+        return c;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,53 +123,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         camera.autoFocus(autoFocusCallback);
     }
 
-    private Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
-        @Override
-        public void onAutoFocus(boolean success, Camera camera) {
-            Log.i(TAG, "onAutoFocus()");
-
-            if (success) {
-                camera.takePicture(null, null, pictureCallback);
-            }
-        }
-    };
-
-    private Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
-        @Override
-        public void onPictureTaken(final byte[] data, Camera camera) {
-            Log.i(TAG, "onPictureTaken()");
-
-            final boolean secondImage = firstImageTaken;
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String filename = "FUR.jpg";
-                    if (secondImage) {
-                        filename = "BDL.jpg";
-                    }
-
-                    saveImage(data, filename);
-                }
-            }).start();
-
-            if (!secondImage) {
-                firstImageTaken = true;
-
-                camera.startPreview();
-
-                ImageView overlay = (ImageView) findViewById(R.id.camera_overlay);
-                overlay.setImageResource(R.drawable.overlay_2);
-
-                Toast.makeText(getApplicationContext(), "Scan BDL", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Processing...", Toast.LENGTH_SHORT).show();
-
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            }
-        }
-    };
-
     private void saveImage(byte[] data, String filename) {
         try {
             String dir = getCacheDir().getAbsolutePath();
@@ -132,19 +143,6 @@ public class CameraActivity extends Activity implements View.OnClickListener {
         } catch (java.io.IOException e) {
             Log.d(TAG, "Error writing file: " + e.getMessage());
         }
-    }
-
-    public static Camera getCameraInstance() {
-        Camera c = null;
-
-        try {
-            c = Camera.open();
-
-        } catch (Exception e) {
-            // Camera is not available (in use or does not exist)
-        }
-
-        return c;
     }
 
     private void releaseCamera() {

@@ -2,4 +2,7 @@
     <string name="app_name">RubikFix</string>
     <string name="image_view">Display a taken picture</string>
     <string name="camera_overlay">Display an overlay to assist lining-up</string>
+    <string name="capture">Capture</string>
+    <string name="load_fur">Load FUR</string>
+    <string name="load_bdl">Load BDL</string>
 </resources>

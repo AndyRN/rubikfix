@@ -20,19 +20,19 @@
             android:id="@+id/button_capture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Capture" />
+            android:text="@string/capture" />
 
         <Button
             android:id="@+id/button_load_fur"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Load FUR" />
+            android:text="@string/load_fur" />
 
         <Button
             android:id="@+id/button_load_bdl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Load BDL" />
+            android:text="@string/load_bdl" />
 
     </LinearLayout>
 
@@ -64,8 +64,8 @@
             android:id="@+id/pixel_colour_preview"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_weight="10"
-            android:layout_margin="5dp" />
+            android:layout_margin="5dp"
+            android:layout_weight="10" />
 
     </LinearLayout>
 

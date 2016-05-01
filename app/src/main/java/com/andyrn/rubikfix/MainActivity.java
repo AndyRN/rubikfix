@@ -18,10 +18,47 @@ import android.widget.TextView;
 import java.io.FileInputStream;
 
 /**
- * Created by Andy on 12/10/2015.
+ * Author: Andy
+ * Date: 12/10/2015
  */
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private final View.OnTouchListener touchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            ImageView imageView = ((ImageView) v);
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            TextView touchCoordinates = (TextView) findViewById(R.id.touch_coordinates);
+            TextView pixelColour = (TextView) findViewById(R.id.pixel_colour);
+            View pixelColourPreview = findViewById(R.id.pixel_colour_preview);
+
+            float scaleFactor = (float) bitmap.getHeight() / imageView.getHeight();
+
+            float x = event.getX() * scaleFactor;
+            float y = event.getY() * scaleFactor;
+
+            if (x < 0 || y < 0 || x > bitmap.getWidth() || y > bitmap.getHeight()) {
+                return false;
+            }
+
+            assert touchCoordinates != null;
+            touchCoordinates.setText(String.format("Touch coordinates : x(%s), y(%s)", String.valueOf(x), String.valueOf(y)));
+
+            int pixel = bitmap.getPixel((int) x, (int) y);
+
+            int redValue = Color.red(pixel);
+            int greenValue = Color.green(pixel);
+            int blueValue = Color.blue(pixel);
+
+            assert pixelColour != null;
+            pixelColour.setText(String.format("Pixel's colour : r(%s), g(%s), b(%s)", String.valueOf(redValue), String.valueOf(greenValue), String.valueOf(blueValue)));
+
+            assert pixelColourPreview != null;
+            pixelColourPreview.setBackgroundColor(pixel);
+
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Button capture = (Button) findViewById(R.id.button_capture);
+        assert capture != null;
         capture.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -41,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         Button loadFur = (Button) findViewById(R.id.button_load_fur);
+        assert loadFur != null;
         loadFur.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -51,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         Button loadBdl = (Button) findViewById(R.id.button_load_bdl);
+        assert loadBdl != null;
         loadBdl.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -69,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap bmp = BitmapFactory.decodeStream(fis);
 
             ImageView image = (ImageView) findViewById(R.id.loaded_image);
+            assert image != null;
             image.setImageBitmap(bmp);
 
             fis.close();
@@ -81,40 +122,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Error reading file: " + e.getMessage());
         }
     }
-
-    private View.OnTouchListener touchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            ImageView imageView = ((ImageView) v);
-            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-            TextView touchCoordinates = (TextView) findViewById(R.id.touch_coordinates);
-            TextView pixelColour = (TextView) findViewById(R.id.pixel_colour);
-            View pixelColourPreview = findViewById(R.id.pixel_colour_preview);
-
-            float scaleFactor = (float) bitmap.getHeight() / imageView.getHeight();
-
-            float x = event.getX() * scaleFactor;
-            float y = event.getY() * scaleFactor;
-
-            if (x < 0 || y < 0 || x > bitmap.getWidth() || y > bitmap.getHeight()) {
-                return false;
-            }
-
-            touchCoordinates.setText(String.format("Touch coordinates : x(%s), y(%s)", String.valueOf(x), String.valueOf(y)));
-
-            int pixel = bitmap.getPixel((int) x, (int) y);
-
-            int redValue = Color.red(pixel);
-            int greenValue = Color.green(pixel);
-            int blueValue = Color.blue(pixel);
-
-            pixelColour.setText(String.format("Pixel's colour : r(%d), g(%d), b(%d)", redValue, greenValue, blueValue));
-
-            pixelColourPreview.setBackgroundColor(pixel);
-
-            return true;
-        }
-    };
 
 //    private View.OnTouchListener touchListener = new View.OnTouchListener() {
 //        @Override
