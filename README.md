@@ -1,2 +1,2 @@
 # RubikFix
-An Android app.
+An app.
